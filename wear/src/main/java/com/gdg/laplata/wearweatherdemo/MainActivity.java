@@ -8,16 +8,26 @@ import android.widget.TextView;
 public class MainActivity extends Activity {
 
     private TextView mTextView;
-
+    String mMessage = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+        if (getIntent()!= null) {
+            mMessage = getIntent().getStringExtra(DataLayerListenerService.MESSAGE_KEY);
+            if (mMessage == null) {
+                mMessage = "No Weather Data";
+            }
+        }
+
         final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
         stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
             @Override
             public void onLayoutInflated(WatchViewStub stub) {
                 mTextView = (TextView) stub.findViewById(R.id.text);
+                mTextView.setText(mMessage);
             }
         });
     }

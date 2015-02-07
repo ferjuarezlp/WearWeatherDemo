@@ -24,7 +24,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Enviar a Wear"
-            android:onClick="onStartWearableActivityClick"
             android:id="@+id/btnSendToWear" />
 
 

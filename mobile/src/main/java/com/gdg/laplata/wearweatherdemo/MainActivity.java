@@ -7,12 +7,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
-import com.google.android.gms.wearable.Node;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.wearable.MessageApi;
+import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.Wearable;
 
@@ -30,7 +32,7 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
 
     TextView textName;
     TextView textTemp;
-
+    Button sendToWear;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +41,20 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
 
         textName = (TextView) findViewById(R.id.textName);
         textTemp = (TextView) findViewById(R.id.textTemp);
+        sendToWear = (Button) findViewById(R.id.btnSendToWear);
 
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(Wearable.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
+
+        sendToWear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new StartWearableActivityTask().execute(textName.getText().toString() + " " + textTemp.getText().toString() );
+            }
+        });
     }
 
     @Override
@@ -66,16 +81,9 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
         super.onStop();
     }
 
-    // Sends an RPC to show a message in a Activity on the wearable.
-    public void onStartWearableActivityClick(View view) {
-        // Trigger an AsyncTask that will query for a list of connected nodes and send a
-        // "start-activity" message to each connected node.
-        new StartWearableActivityTask().execute(textName.getText().toString() + " " + textTemp.getText().toString() );
-    }
-
     @Override
     public void onConnected(Bundle bundle) {
-
+        Log.e(TAG, "Connected");
     }
 
     @Override
@@ -85,7 +93,7 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-
+        Log.e(TAG, "Fail");
     }
 
     private class StartWearableActivityTask extends AsyncTask<String, Void, Void> {
